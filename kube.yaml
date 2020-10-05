@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-hello
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-hello
+  template:
+    metadata:
+      labels:
+        app: python-hello
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: python-hello
+        image: sgujjaracrreg.azurecr.io/boldchickenaks:f7898f94d8a8d7444911a6622540ec42e55a64fd
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-hello
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    app: python-hello
